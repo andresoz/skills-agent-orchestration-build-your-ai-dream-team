@@ -1,0 +1,36 @@
+{
+  "projects": [
+    {
+      "name": "Atlas Migration",
+      "owner": "Platform Team",
+      "status": "Active",
+      "recentActivity": "Completed the first service migration; validating dashboards next.",
+      "priority": "High",
+      "summary": "Move core services onto the shared cloud platform with a safer, repeatable release process."
+    },
+    {
+      "name": "Onboarding Refresh",
+      "owner": "Mona Patel",
+      "status": "On track",
+      "recentActivity": "Usability review finished; incorporating feedback into the welcome flow.",
+      "priority": "Medium",
+      "summary": "Make it easier for new contributors to find setup guidance and make their first change."
+    },
+    {
+      "name": "Search Improvements",
+      "owner": "Developer Experience",
+      "status": "At risk",
+      "recentActivity": "Relevance testing is underway; a data dependency may affect the target date.",
+      "priority": "High",
+      "summary": "Improve search quality so teams can locate internal documentation and examples faster."
+    },
+    {
+      "name": "Usage Insights",
+      "owner": "Analytics Team",
+      "status": "Planned",
+      "recentActivity": "Scope and success measures are being drafted for the next planning cycle.",
+      "priority": "Low",
+      "summary": "Provide a clear view of product usage trends to help teams prioritize improvements."
+    }
+  ]
+}

@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="A quick overview of project ownership, status, activity, and priority.">
+    <title>Project Pulse</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="dashboard">
+      <header class="dashboard-header">
+        <h1>Project Pulse</h1>
+        <p>A quick view of what teams are working on and what needs attention.</p>
+      </header>
+
+      <section class="project-section" aria-labelledby="projects-heading">
+        <h2 id="projects-heading">Projects</h2>
+        <p id="project-state" role="status" aria-live="polite">Loading projects…</p>
+        <div id="project-list" class="project-list" aria-busy="true"></div>
+      </section>
+    </main>
+
+    <script>
+      const projectList = document.querySelector("#project-list");
+      const projectState = document.querySelector("#project-state");
+
+      function classToken(value) {
+        return String(value).toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+      }
+
+      function addDetail(list, label, value) {
+        const term = document.createElement("dt");
+        term.textContent = label;
+        const description = document.createElement("dd");
+        description.textContent = value;
+        list.append(term, description);
+      }
+
+      function renderProject(project) {
+        const card = document.createElement("article");
+        card.classList.add("project-card");
+
+        const title = document.createElement("h3");
+        title.textContent = project.name;
+        card.append(title);
+
+        const summary = document.createElement("p");
+        summary.className = "project-summary";
+        summary.textContent = project.summary;
+        card.append(summary);
+
+        const details = document.createElement("dl");
+        details.className = "project-details";
+        addDetail(details, "Owner", project.owner);
+        addDetail(details, "Recent activity", project.recentActivity);
+        card.append(details);
+
+        const badges = document.createElement("ul");
+        badges.className = "project-badges";
+
+        const status = document.createElement("li");
+        status.classList.add("status-badge", `status-${classToken(project.status)}`);
+        status.textContent = `Status: ${project.status}`;
+
+        const priority = document.createElement("li");
+        priority.classList.add("priority-badge", `priority-${classToken(project.priority)}`);
+        priority.textContent = `Priority: ${project.priority}`;
+
+        badges.append(status, priority);
+        card.append(badges);
+        return card;
+      }
+
+      async function loadProjects() {
+        try {
+          const response = await fetch("project-data.json");
+          if (!response.ok) {
+            throw new Error(`Project data request failed (${response.status}).`);
+          }
+
+          const data = await response.json();
+          if (!data || !Array.isArray(data.projects)) {
+            throw new Error("Project data must contain a projects array.");
+          }
+
+          const cards = data.projects.map((project) => {
+            const requiredFields = ["name", "owner", "status", "recentActivity", "priority", "summary"];
+            if (!project || requiredFields.some((field) => typeof project[field] !== "string" || !project[field].trim())) {
+              throw new Error("A project is missing one or more required details.");
+            }
+            return renderProject(project);
+          });
+
+          projectList.replaceChildren(...cards);
+          projectState.textContent = cards.length
+            ? `${cards.length} ${cards.length === 1 ? "project" : "projects"}`
+            : "No projects to display yet.";
+        } catch (error) {
+          projectState.textContent = `Unable to load projects. ${error.message}`;
+          projectState.setAttribute("role", "alert");
+        } finally {
+          projectList.setAttribute("aria-busy", "false");
+        }
+      }
+
+      loadProjects();
+    </script>
+  </body>
+</html>
